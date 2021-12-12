@@ -10,7 +10,7 @@ const tour = require('../controllers/tourControllers');
 // router.put('/:id', tour.editTour);
 // router.delete('/:id', tour.deleteTour);
 // router.delete('/:id', tour.deleteTour);
-router.route('/top-5-cheap').get(tour.aliasTopTour,tour.getAllTours);   //cheapest Tour route
+router.route('/top-5-cheap').get(tour.aliasTopTour, tour.getAllTours); //cheapest Tour route
 router.route('/tour-stats').get(tour.getTourStats);
 router.route('/monthly-plan/:year').get(tour.getMonthlyPlan);
 //New version
