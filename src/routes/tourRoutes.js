@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 // const { getAllTours } = require('../controllers/tourControllers');
 const tour = require('../controllers/tourControllers');
+const authController = require('../controllers/authController');
 
 //Old version
 // router.post('/', tour.createTour);
@@ -19,6 +20,6 @@ router
   .route('/:id')
   .get(tour.getSingleTour)
   .put(tour.editTour)
-  .delete(tour.deleteTour);
+  .delete(tour.deleteTour, authController.restrictTo('admin', 'superAdmin'));
 
 module.exports = router;

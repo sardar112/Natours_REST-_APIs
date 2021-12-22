@@ -52,12 +52,12 @@ const protect = catchAsync(async (req, res, next) => {
 
     const currentUser = await User.findByid(decoded.id);
     if (!currentUser) {
-      next(new AppError('user does not exist', 401));
+      return next(new AppError('user does not exist', 401));
     }
     //check if user changed the password after login
 
     if (currentUser.changedPasswordAfter(decoded.iat)) {
-      next(
+      return next(
         new AppError(
           'user recently changed the password ,please login again',
           401
@@ -71,4 +71,25 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { signup, login, protect };
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('Access denied for user  to perform this action', 403)
+      );
+    }
+    next();
+  };
+};
+
+const forgotPassword = (req, res, next) => {};
+const resetPassword = (req, res, next) => {};
+
+module.exports = {
+  signup,
+  login,
+  protect,
+  restrictTo,
+  forgotPassword,
+  resetPassword,
+};
