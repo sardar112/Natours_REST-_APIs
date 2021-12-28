@@ -6,6 +6,26 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 const { signToken } = require('../utils/jwtFtns');
+
+const createSendToken = (user, statusCode, res) => {
+  const token = await signToken(user._id);
+  // sending token in cookie
+  const cookieOption = {
+    expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
+    // secure: true     if it is in production mode
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV == 'production') cookieOption.secure = true;
+  res.cookie('jwtToken', token, cookieOption);
+  // for not showing to user
+  user.password = undefined;
+  res.status(statusCode).json({
+    status: 'Success',
+    token,
+    data: { user },
+  });
+};
+
 //routes
 const signup = catchAsync(async (req, res) => {
   const newUser = await User.create(req.body);
@@ -136,6 +156,23 @@ const resetPassword = catchAsync(async (req, res, next) => {
     token,
   });
 });
+const updatePassword = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id).select('+password');
+  if (!(await user.correctPassword(req.body.password, user.password))) {
+    return next(new AppError('Invalid password', 401));
+  }
+  user.password = req.body.password;
+  user.confirmPassword = req.body.confirmPassword;
+  await user.save();
+
+  const token = await signToken(user._id);
+  res.status(200).json({
+    status: 'Success',
+    message: 'Password Updated successfully',
+    token,
+    data: { user },
+  });
+});
 
 module.exports = {
   signup,
@@ -144,4 +181,5 @@ module.exports = {
   restrictTo,
   forgotPassword,
   resetPassword,
+  updatePassword,
 };

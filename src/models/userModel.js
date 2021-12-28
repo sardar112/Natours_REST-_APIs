@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a password'],
     minLength: 8,
-    select: true,
+    select: false,
   },
   confirmPassword: {
     type: String,
@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
   },
 
   photo: String,
+  active: {
+    type: Boolean,
+    default: true,
+  },
   role: {
     type: String,
     enum: ['user', 'admin'],
@@ -49,6 +53,10 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: {$ne:false} });
   next();
 });
 
