@@ -64,6 +64,15 @@ const createTour = async (req, res) => {
 
 const getSingleTour = async (req, res) => {
   try {
+    //populate create 2 queries, can b effect on perormance for the large scale app
+    // const tour = await Tour.findById(req.params.id); old query
+    // const tour = await Tour.findById(req.params.id).populate('guides '); simple populate
+    //excluding -v and passwordChangeAt prperty from the document
+    // to avoid the duplication in single and  getalltours we have created query middlware for population in the  tour model
+    // const tour = await Tour.findById(req.params.id).populate({
+    //   path: 'guides',
+    //   select: '-_v -passwordChangeAt',
+    // });
     const tour = await Tour.findById(req.params.id);
     if (tour) {
       res.status(200).json({
