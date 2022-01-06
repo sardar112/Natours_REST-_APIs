@@ -7,10 +7,12 @@ const rateLimit = require('express-rate-limit');
 const mongooseSanitize = require('express-mongoose-sanitize');
 const app = express();
 
-const tourRoutes = require('./src/routes/tourRoutes');
 const AppError = require('./src/utils/appError');
 const globalErrorHandler = require('./src/controllers/errorControllers');
 const userRoutes = require('./src/routes/userRoutes');
+const tourRoutes = require('./src/routes/tourRoutes');
+const reviewRoutes = require('./src/routes/reviewRoutes');
+
 //APLICATION MIDDLEWARE
 //set security http headers
 app.use(helmet());
@@ -40,6 +42,7 @@ app.use(express.static(`${__dirname}/public`));
 //ROUTES
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 
 //WILDE CARD ROUTES
 app.use('**', (req, res, next) => {

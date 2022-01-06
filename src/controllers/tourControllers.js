@@ -73,7 +73,8 @@ const getSingleTour = async (req, res) => {
     //   path: 'guides',
     //   select: '-_v -passwordChangeAt',
     // });
-    const tour = await Tour.findById(req.params.id);
+    //populate("reviews") to get reviews in singletour
+    const tour = await Tour.findById(req.params.id).populate('reviews');
     if (tour) {
       res.status(200).json({
         status: 'Success',

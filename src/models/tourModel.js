@@ -103,6 +103,16 @@ tourSchema.pre('save', async function (next) {
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+//virtual populate
+tourSchema
+  .virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'tour',
+    localField: '_id',
+  })
+  .get(function () {
+    return this.duration / 7;
+  });
 //QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function (next) {
   this.find({ secreteTour: { $ne: true } });
