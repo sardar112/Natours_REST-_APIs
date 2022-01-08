@@ -3,6 +3,17 @@ const router = express.Router();
 // const { getAllTours } = require('../controllers/tourControllers');
 const tour = require('../controllers/tourControllers');
 const authController = require('../controllers/authController');
+const reviewRoutes = require('../routes/reviewRoutes');
+
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createRiview
+//   );
+// merge params concept
+reviewRoutes.use('/:tourId/reviews', reviewRoutes);
 
 //Old version
 // router.post('/', tour.createTour);
@@ -21,5 +32,13 @@ router
   .get(tour.getSingleTour)
   .put(tour.editTour)
   .delete(tour.deleteTour, authController.restrictTo('admin', 'superAdmin'));
+
+router
+  .route('/:tourId/reviews')
+  .post(
+    authController.protect,
+    authController.restrictTo('user'),
+    reviewController.createRiview
+  );
 
 module.exports = router;

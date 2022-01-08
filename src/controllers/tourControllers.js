@@ -20,17 +20,10 @@ const getAllTours = async (req, res) => {
     const tours = await features.query;
     // const query = Tour.find();
     // const allTours = await query;
-    if (allTours.length) {
-      res.status(200).json({
-        status: 'Success',
-        data: tours,
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Could not find tours',
-      });
-    }
+    res.status(200).json({
+      status: 'Success',
+      data: tours,
+    });
   } catch (err) {
     res.status(400).json({
       status: 'Fail',
@@ -42,18 +35,11 @@ const getAllTours = async (req, res) => {
 const createTour = async (req, res) => {
   try {
     const newTour = await Tour.create({ ...req.body });
-    if (newTour) {
-      res.json({
-        status: 'Success',
-        message: 'Tour created successfully',
-        data: newTour,
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Coud not create tour',
-      });
-    }
+    res.json({
+      status: 'Success',
+      message: 'Tour created successfully',
+      data: newTour,
+    });
   } catch (err) {
     res.status(404).json({
       status: 'Fail',
@@ -75,17 +61,10 @@ const getSingleTour = async (req, res) => {
     // });
     //populate("reviews") to get reviews in singletour
     const tour = await Tour.findById(req.params.id).populate('reviews');
-    if (tour) {
-      res.status(200).json({
-        status: 'Success',
-        data: tour,
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Could not find tour',
-      });
-    }
+    res.status(200).json({
+      status: 'Success',
+      data: tour,
+    });
   } catch (err) {
     res.status(404).json({
       status: 'Fail',
@@ -97,17 +76,10 @@ const getSingleTour = async (req, res) => {
 const deleteTour = async (req, res) => {
   try {
     const tour = await Tour.findById(req.params.id);
-    if (tour) {
-      res.status(204).json({
-        status: 'Success',
-        message: 'Tour deleted successfully',
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Could not find tours',
-      });
-    }
+    res.status(204).json({
+      status: 'Success',
+      message: 'Tour deleted successfully',
+    });
   } catch (err) {
     res.status(404).json({
       status: 'Fail',
@@ -151,17 +123,10 @@ const getTourStats = async (req, res) => {
       },
     ]);
 
-    if (stats) {
-      res.status(200).json({
-        status: 'Success',
-        data: stats,
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Could not find stats',
-      });
-    }
+    res.status(200).json({
+      status: 'Success',
+      data: stats,
+    });
   } catch (err) {
     res.status(404).json({
       status: 'Fail',
@@ -206,17 +171,10 @@ const getMonthlyPlan = async (req, res) => {
       //   $limit:6
       // }
     ]);
-    if (plan) {
-      res.status(204).json({
-        status: 'Success',
-        data: plan,
-      });
-    } else {
-      res.status(400).json({
-        status: 'Fail',
-        message: 'Could not find tours',
-      });
-    }
+    res.status(204).json({
+      status: 'Success',
+      data: plan,
+    });
   } catch (err) {
     res.status(404).json({
       status: 'Fail',
