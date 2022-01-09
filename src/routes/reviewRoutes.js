@@ -7,13 +7,26 @@ const authController = require('../controllers/authController');
 // merge params handel req like this
 //POST /tour/tourId/review or POST  /reviews
 // through  mergeParams  we can access to tour id which is in tour controller
+
+router.use(authController.protect);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.protect,
     authController.restrictTo('user'),
+    reviewController.setTourUserIds,
     reviewController.createRiview
   );
-
+router
+  .route('/:id')
+  .get(reviewController.getReview)
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  )
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  );
 module.exports = router;

@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const factory = require('../controllers/handleFactory');
 
 const filterObj = (obj, ...allowFields) => {
   const newObj = {};
@@ -10,6 +11,10 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
+const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 const updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.confirmPassword) {
     return next(
@@ -42,5 +47,7 @@ const deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+const getUser = factory.getOne(User);
+const getAllUsers = factory.getAll(User);
 
-module.exports = { updateMe, deleteMe };
+module.exports = { updateMe, deleteMe, getUser, getAllUsers, getMe };

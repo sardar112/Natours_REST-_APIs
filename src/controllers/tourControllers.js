@@ -1,5 +1,5 @@
 const Tour = require('./../models/tourModel');
-const APIFeatures = require('./../utils/apiFeatures');
+const factory = require('../controllers/handleFactory');
 
 //Aliasing thisnis only for when most used route is needed .ie user wants five best cheep things
 const aliasTopTour = (req, res, next) => {
@@ -10,90 +10,11 @@ const aliasTopTour = (req, res, next) => {
   next();
 };
 
-const getAllTours = async (req, res) => {
-  try {
-    const features = new APIFeatures(Tour.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .pagination();
-    const tours = await features.query;
-    // const query = Tour.find();
-    // const allTours = await query;
-    res.status(200).json({
-      status: 'Success',
-      data: tours,
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'Fail',
-      message: err.message,
-    });
-  }
-};
-
-const createTour = async (req, res) => {
-  try {
-    const newTour = await Tour.create({ ...req.body });
-    res.json({
-      status: 'Success',
-      message: 'Tour created successfully',
-      data: newTour,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'Fail',
-      message: err.message,
-    });
-  }
-};
-
-const getSingleTour = async (req, res) => {
-  try {
-    //populate create 2 queries, can b effect on perormance for the large scale app
-    // const tour = await Tour.findById(req.params.id); old query
-    // const tour = await Tour.findById(req.params.id).populate('guides '); simple populate
-    //excluding -v and passwordChangeAt prperty from the document
-    // to avoid the duplication in single and  getalltours we have created query middlware for population in the  tour model
-    // const tour = await Tour.findById(req.params.id).populate({
-    //   path: 'guides',
-    //   select: '-_v -passwordChangeAt',
-    // });
-    //populate("reviews") to get reviews in singletour
-    const tour = await Tour.findById(req.params.id).populate('reviews');
-    res.status(200).json({
-      status: 'Success',
-      data: tour,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'Fail',
-      message: err.message,
-    });
-  }
-};
-
-const deleteTour = async (req, res) => {
-  try {
-    const tour = await Tour.findById(req.params.id);
-    res.status(204).json({
-      status: 'Success',
-      message: 'Tour deleted successfully',
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: 'Fail',
-      message: err.message,
-    });
-  }
-};
-
-const editTour = async (req, res) => {
-  const result = await res.json({
-    status: 200,
-    message: 'Hello editTour',
-  });
-};
+const getAllTours = factory.getAll(Tour);
+const getSingleTour = factory.getOne(Tour, { path: 'reviews' });
+const createTour = factory.createOne(Tour);
+const deleteTour = factory.deleteOne(Tour);
+const updateTour = factory.updateOne(Tour);
 
 //Aggregation
 const getTourStats = async (req, res) => {
@@ -188,7 +109,7 @@ module.exports = {
   getSingleTour,
   createTour,
   deleteTour,
-  editTour,
+  updateTour,
   aliasTopTour,
   getTourStats,
   getMonthlyPlan,

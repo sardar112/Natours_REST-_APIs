@@ -93,6 +93,14 @@ const tourSchema = new mongoose.Schema(
   },
   { toJson: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// tourSchema.index({ price: 1 });single
+
+/*it will EXAMIN  the only documents that have the exact value .
+ wihich is more efficientfor performance we only apply indexes on that most queried field 
+ index are more powerful  and efficient for  reading the  data from the database.
+ */
+tourSchema.index({ price: 1, ratingsAverage: -1 }); //compound indexing
 //embedding the user document  and adding to the tour and fecthing the user document
 tourSchema.pre('save', async function (next) {
   const guidesPromises = await this.guides.map((id) => User.findById(id));
