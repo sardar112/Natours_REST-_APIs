@@ -22,22 +22,30 @@ reviewRoutes.use('/:tourId/reviews', reviewRoutes);
 // router.put('/:id', tour.editTour);
 // router.delete('/:id', tour.deleteTour);
 // router.delete('/:id', tour.deleteTour);
+
+//New version
+
 router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTour, tourController.getAllTours); //cheapest Tour route
 router.route('/tour-stats').get(tourController.getTourStats);
 router
+  //tours-within/233/center/-40,45/unit/mi
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getAllToursWithIn);
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
+
+router.use(authController.protect);
+router
   .route('/monthly-plan/:year')
   .get(
-    authController.protect,
     authController.restrictTo('admin', 'superAdmin'),
     tourController.getMonthlyPlan
   );
-//New version
+
 router
   .route('/')
   .post(
-    authController.protect,
     authController.restrictTo('admin', 'lead-guy'),
     tourController.createTour
   )
@@ -46,12 +54,10 @@ router
   .route('/:id')
   .get(tourController.getSingleTour)
   .put(
-    authController.protect,
     authController.restrictTo('admin', 'lead-guy'),
     tourController.updateTour
   )
   .delete(
-    authController.protect,
     authController.restrictTo('admin', 'superAdmin'),
     tourController.deleteTour
   );

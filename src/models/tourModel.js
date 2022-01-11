@@ -104,6 +104,8 @@ const tourSchema = new mongoose.Schema(
  index are more powerful  and efficient for  reading the  data from the database.
  */
 tourSchema.index({ price: 1, ratingsAverage: -1 }); //compound indexing
+tourSchema.index({ startLocation: '2dsphere' }); //compound indexing
+
 //embedding the user document  and adding to the tour and fecthing the user document
 tourSchema.pre('save', async function (next) {
   const guidesPromises = await this.guides.map((id) => User.findById(id));
@@ -142,10 +144,11 @@ tourSchema.pre(/^find/, function (next) {
 //   next();
 // });
 //Aggregation MIDDLEWARE
-tourSchema.pre('aggregate', function (next) {
-  this.pipeLine.unshift({ $match: { secreteTour: { $ne: true } } });
-  next();
-});
+//it will not run bcz of geoNear . it  create index
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeLine.unshift({ $match: { secreteTour: { $ne: true } } });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
