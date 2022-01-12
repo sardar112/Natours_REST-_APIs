@@ -4,7 +4,8 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const mongooseSanitize = require('express-mongoose-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
+
 const app = express();
 
 const AppError = require('./src/utils/appError');
@@ -21,8 +22,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 //limit some api
-const limitter = rateLimit;
-({
+const limitter = rateLimit({
   max: 100,
   windowMS: 60 * 6 * 1000,
   message: 'Too many request , please try again in an hour later.',
@@ -31,7 +31,7 @@ app.use('/api', limitter);
 //reading data from body  into req.body
 app.use(express.json({ limit: '10kb' }));
 //data sanitization against nosql query injection
-app.use(mongooseSanitize());
+app.use(mongoSanitize());
 //data sanitization against xss
 app.use(xss());
 //prevent params pollution

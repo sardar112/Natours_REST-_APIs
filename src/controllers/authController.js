@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
-const { promisify } = require('utils');
+const { promisify } = require('');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
-const { signToken } = require('../utils/jwtFtns');
+const signToken = require('../utils/jwtFtns');
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = async (user, statusCode, res) => {
   const token = await signToken(user._id);
   // sending token in cookie
   const cookieOption = {
@@ -29,7 +29,7 @@ const createSendToken = (user, statusCode, res) => {
 //routes
 const signup = catchAsync(async (req, res) => {
   const newUser = await User.create(req.body);
-  const token = await signToken(user._id);
+  const token = await signToken(newUser._id);
   res.status(200).json({
     status: 'Success',
     message: 'Tour created successfully',
@@ -182,4 +182,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   updatePassword,
+  createSendToken,
 };
