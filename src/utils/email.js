@@ -24,4 +24,12 @@ const sendEmail = async (options) => {
   await transporter.sendEmail(mailOptions);
 };
 
+const jwt = require('jsonwebtoken');
+
+exports.signToken = async (payload) => {
+  await jwt.sign({ id: payload }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
 module.exports = sendEmail;

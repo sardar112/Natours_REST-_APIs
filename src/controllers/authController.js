@@ -5,7 +5,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
-const signToken = require('../utils/jwtFtns');
+const { signToken } = require('../utils/jwtFtns');
 
 const createSendToken = async (user, statusCode, res) => {
   const token = await signToken(user._id);
