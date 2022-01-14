@@ -15,7 +15,7 @@ const deleteReview = factory.deleteOne(Review);
 const updateReview = factory.updateOne(Review);
 
 module.exports = {
-  createReview: createReview,
+  createReview,
   getAllReviews,
   deleteReview,
   updateReview,

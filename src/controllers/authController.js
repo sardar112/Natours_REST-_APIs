@@ -7,24 +7,24 @@ const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 const { signToken } = require('../utils/jwtFunction');
 
-// const createSendToken = async (user, statusCode, res) => {
-//   const token = await signToken(user._id);
-//   // sending token in cookie
-//   const cookieOption = {
-//     expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
-//     // secure: true     if it is in production mode
-//     httpOnly: true,
-//   };
-//   if (process.env.NODE_ENV == 'production') cookieOption.secure = true;
-//   res.cookie('jwtToken', token, cookieOption);
-//   // for not showing to user
-//   user.password = undefined;
-//   res.status(statusCode).json({
-//     status: 'Success',
-//     token,
-//     data: { user },
-//   });
-// };
+const createSendToken = async (user, statusCode, res) => {
+  const token = await signToken(user._id);
+  // sending token in cookie
+  const cookieOption = {
+    expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
+    // secure: true     if it is in production mode
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV == 'production') cookieOption.secure = true;
+  res.cookie('jwtToken', token, cookieOption);
+  // for not showing to user
+  user.password = undefined;
+  res.status(statusCode).json({
+    status: 'Success',
+    token,
+    data: { user },
+  });
+};
 
 //routes
 const signup = catchAsync(async (req, res) => {
