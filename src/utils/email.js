@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
   //creating a transporter
-  const teransporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     // service: 'serviceName like gmail',// USE mailtrap
     // port: 467,
     host: process.env.EMAIL_HOST,

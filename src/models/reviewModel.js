@@ -3,9 +3,9 @@ const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
-    reviewe: {
+    review: {
       type: String,
-      required: [true, 'Review can nott be empty'],
+      required: [true, 'Review can not be empty'],
     },
     rating: {
       type: Number,
@@ -86,7 +86,7 @@ reviewSchema.pre(/^findByIdAnd/, async function (next) {
   next();
 });
 reviewSchema.post(/^findByIdAnd/, async function () {
-  // this.findOne(); does not wprk here bcz the query  has already  executed
+  // this.findOne(); does not work here bcz the query  has already  executed
   await this.r.constructor.calcAverageRatings(this.r.tour);
 });
 

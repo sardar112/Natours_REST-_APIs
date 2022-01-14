@@ -5,26 +5,26 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
-const { signToken } = require('../utils/jwtFtns');
+const { signToken } = require('../utils/jwtFunction');
 
-const createSendToken = async (user, statusCode, res) => {
-  const token = await signToken(user._id);
-  // sending token in cookie
-  const cookieOption = {
-    expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
-    // secure: true     if it is in production mode
-    httpOnly: true,
-  };
-  if (process.env.NODE_ENV == 'production') cookieOption.secure = true;
-  res.cookie('jwtToken', token, cookieOption);
-  // for not showing to user
-  user.password = undefined;
-  res.status(statusCode).json({
-    status: 'Success',
-    token,
-    data: { user },
-  });
-};
+// const createSendToken = async (user, statusCode, res) => {
+//   const token = await signToken(user._id);
+//   // sending token in cookie
+//   const cookieOption = {
+//     expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
+//     // secure: true     if it is in production mode
+//     httpOnly: true,
+//   };
+//   if (process.env.NODE_ENV == 'production') cookieOption.secure = true;
+//   res.cookie('jwtToken', token, cookieOption);
+//   // for not showing to user
+//   user.password = undefined;
+//   res.status(statusCode).json({
+//     status: 'Success',
+//     token,
+//     data: { user },
+//   });
+// };
 
 //routes
 const signup = catchAsync(async (req, res) => {
@@ -40,9 +40,9 @@ const signup = catchAsync(async (req, res) => {
 
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  // if (!email || !password) {
-  //   return next(new AppError('Please provide a email and password,', 400));
-  // }
+  if (!email || !password) {
+    return next(new AppError('Please provide a email and password,', 400));
+  }
 
   const user = await User.findOne({ email }).select('+password');
 
@@ -72,7 +72,7 @@ const protect = catchAsync(async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     //check if user exists
 
-    const currentUser = await User.findByid(decoded.id);
+    const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return next(new AppError('user does not exist', 401));
     }
@@ -146,7 +146,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
   });
   if (!user) return next(new AppError('Token is invalid or expired', 400));
   user.password = req.body.password;
-  confirmPassword = req.body.Confirmpassword;
+  confirmPassword = req.body.ConfirmPassword;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   user.save();

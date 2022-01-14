@@ -10,12 +10,12 @@ const setTourUserIds = (req, res, next) => {
 
 const getAllReviews = factory.getAll(Review);
 const getReview = factory.getOne(Review);
-const createRiview = factory.createOne(Review);
+const createReview = factory.createOne(Review);
 const deleteReview = factory.deleteOne(Review);
 const updateReview = factory.updateOne(Review);
 
 module.exports = {
-  createRiview,
+  createReview: createReview,
   getAllReviews,
   deleteReview,
   updateReview,

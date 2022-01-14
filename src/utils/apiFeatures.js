@@ -11,12 +11,12 @@ class APIFeatures {
     const excludedFields = ['page', 'sort', 'fields', 'limit'];
     excludedFields.forEach((field) => delete queryObj[field]);
     //in this we we have to set url manually [lte] or [gt]
-    let querStr = JSON.stringify(queryObj);
-    querStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     queryStr = this.query.find.JSON.parse(queryStr);
     // anotherWay
     // {
-    //    req.quer.name,
+    //    req.query.name,
     //    length:{$lte:number}
     //  }
 
@@ -28,9 +28,9 @@ class APIFeatures {
   sorting() {
     //assending sort=property
     //dessending sort=-property
-    if (this.querString.sort) {
+    if (this.queryString.sort) {
       //if sorting on multiple multiple
-      const sortBy = this.querString.split(',').join(' ');
+      const sortBy = this.queryString.split(',').join(' ');
       query = this.query.sort(sortBy);
       // this.query= this.query.sort(this.queryString.sort)
     } else {

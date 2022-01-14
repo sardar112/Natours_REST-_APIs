@@ -22,12 +22,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 //limit some api
-const limitter = rateLimit({
+const limiter = rateLimit({
   max: 100,
   windowMS: 60 * 6 * 1000,
   message: 'Too many request , please try again in an hour later.',
 });
-app.use('/api', limitter);
+app.use('/api', limiter);
 //reading data from body  into req.body
 app.use(express.json({ limit: '10kb' }));
 //data sanitization against nosql query injection
