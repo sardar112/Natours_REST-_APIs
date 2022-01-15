@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { promisify } = require('');
+const { promisify } = require('util');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -8,7 +8,7 @@ const sendEmail = require('../utils/email');
 const { signToken } = require('../utils/jwtFunction');
 
 const createSendToken = async (user, statusCode, res) => {
-  const token = await signToken(user._id);
+  const token = signToken(user._id);
   // sending token in cookie
   const cookieOption = {
     expiresIn: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), //process.env.expiresin
@@ -28,8 +28,13 @@ const createSendToken = async (user, statusCode, res) => {
 
 //routes
 const signup = catchAsync(async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (user)
+    return next(
+      new AppError(`User Already Registered with email ${req.body.email} `, 400)
+    );
   const newUser = await User.create(req.body);
-  const token = await signToken(newUser._id);
+  const token = signToken(newUser._id);
   res.status(200).json({
     status: 'Success',
     message: 'Tour created successfully',
@@ -41,7 +46,7 @@ const signup = catchAsync(async (req, res) => {
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new AppError('Please provide a email and password,', 400));
+    return next(new AppError('Please provide a email and password', 400));
   }
 
   const user = await User.findOne({ email }).select('+password');
@@ -74,7 +79,9 @@ const protect = catchAsync(async (req, res, next) => {
 
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
-      return next(new AppError('user does not exist', 401));
+      return next(
+        new AppError('user belonging to this token does not exist', 401)
+      );
     }
     //check if user changed the password after login
 
@@ -165,7 +172,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
   user.confirmPassword = req.body.confirmPassword;
   await user.save();
 
-  const token = await signToken(user._id);
+  const token = signToken(user._id);
   res.status(200).json({
     status: 'Success',
     message: 'Password Updated successfully',

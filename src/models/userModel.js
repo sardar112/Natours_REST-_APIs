@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const validator = require('validator');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -11,6 +13,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide a valid email address'],
     unique: true,
     lowercase: true,
+    validate: [validator.isEmail, 'Please provide a valid email '],
   },
   password: {
     type: String,
@@ -21,12 +24,12 @@ const userSchema = new mongoose.Schema({
   confirmPassword: {
     type: String,
     required: [true, 'Please provide a confirm password'],
-    // validate: {
-    //   validator: function (value) {
-    //     return value === this.password;
-    //   },
-    //   message: 'Password are note same',
-    // },
+    validate: {
+      validator: function (value) {
+        return value === this.password;
+      },
+      message: 'Password are note same',
+    },
   },
 
   photo: String,
@@ -50,11 +53,13 @@ userSchema.pre('save', async function (next) {
   this.confirmPassword = undefined;
   next();
 });
+
 userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
@@ -87,5 +92,7 @@ userSchema.method.correctPasswordResetToken = function () {
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
+
 const User = mongoose.model('User', userSchema);
+
 module.exports = User;
